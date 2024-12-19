@@ -164,3 +164,47 @@ class Triangle : public TwoDShape{
       }
     }
 };
+int main() {
+    srand(time(0)); 
+
+    vector<TwoDShape*> shapes;
+
+    // 20-30 санамсаргүй тооны дүрс үүсгэнэ
+    int numShapes = rand() % 11 + 20; 
+    for (int i = 0; i < numShapes; i++) {
+        int shapeType = rand() % 3; // Дүрсний төрлийг санамсаргүй сонгоно
+        TwoDShape* shape = nullptr;
+
+        if (shapeType == 0) { 
+            Circle* circle = new Circle();
+            circle->setCoordinates(rand() % 100, rand() % 100);
+            circle->getData(); // Радиусыг санамсаргүйгээр оруулах
+            shape = circle;
+        } else if (shapeType == 1) { 
+            Square* square = new Square();
+            square->setCoordinates(rand() % 100, rand() % 100);
+            square->getData(); // Талын уртыг санамсаргүйгээр оруулах
+            shape = square;
+        } else { 
+            Triangle* triangle = new Triangle();
+            triangle->setCoordinates(rand() % 100, rand() % 100);
+            triangle->getData(); // Талын уртыг санамсаргүйгээр оруулах
+            shape = triangle;
+        }
+
+        shapes.push_back(shape);
+    }
+
+    // Талбайн хэмжээгээр эрэмбэлнэ
+    sort(shapes.begin(), shapes.end(), [](TwoDShape* a, TwoDShape* b) {
+        return a->get_area() < b->get_area();
+    });
+
+    // Эмхэлсэн дүрсийг хэвлэх
+    for (TwoDShape* shape : shapes) {
+        shape->displayData();
+        delete shape; // Санах ойг чөлөөлнө
+    }
+
+    return 0;
+}
