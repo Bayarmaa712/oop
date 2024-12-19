@@ -60,18 +60,18 @@ public:
       return;
     }
 
-    Node *newNode = new Node(t);  // Шинэ элемент үүсгэнэ
+    Node *newNode = new Node(t);  // shine element uusgeh
 
-    if (index == 0) {  // Хэрэв эхэнд оруулах бол
+    if (index == 0) {  // ehend oruulah
       newNode->next = head;
       head = newNode;
     } else {
       Node *tmp = head;
-      for (int i = 0; i < index - 1; ++i) {  // Зөв индекс хүрэх хүртэл явна
+      for (int i = 0; i < index - 1; ++i) {  // zuw index hurtel
         tmp = tmp->next;
       }
       newNode->next = tmp->next;
-      tmp->next = newNode;  // Индексийн байрлалд элементийг оруулна
+      tmp->next = newNode;  // indexn bairlald element oruulah
     }
     size++;
   }
@@ -83,7 +83,7 @@ public:
     }
 
     Node *tmp = head;
-    for (int i = 0; i < index; ++i) {  // Индекс хүртэл явж элемент олоод буцаана
+    for (int i = 0; i < index; ++i) {  // index hurtel guij element olood butsaah
       tmp = tmp->next;
     }
     return tmp->data;
@@ -97,16 +97,16 @@ public:
     }
 
     Node *toDelete;
-    if (index == 0) {  // Хэрэв эхний элементийг устгах бол
+    if (index == 0) {  // ehnii element ustgah
       toDelete = head;
       head = head->next;
     } else {
       Node *tmp = head;
-      for (int i = 0; i < index - 1; ++i) {  // Индексийн өмнөх элементийг олж явна
+      for (int i = 0; i < index - 1; ++i) {  // indexn umnuh elementg olno
         tmp = tmp->next;
       }
       toDelete = tmp->next;
-      tmp->next = toDelete->next;  // Элементийг холбоосоос хасна
+      tmp->next = toDelete->next;  // elementiig ustgana
     }
     delete toDelete;  
     size--;
@@ -119,21 +119,21 @@ public:
 };
 
 int main() {
-  // Жишээ жагсаалт
+  // jishee
   LinkedList<int> list;
 
   list.add(1);
   list.add(2);
   list.add(3);
 
-  list.insert(4, 1); // 1-р байрлалд 4 оруулна
+  list.insert(4, 1); // 1-r bairlald 4-iig oruulna
   cout << "Жагсаалтын урт: " << list.length() << endl;
 
   for (int i = 0; i < list.length(); ++i) {
     cout << "Элемент [" << i << "]: " << list.get(i) << endl;
   }
 
-  list.remove(2); // 2-р элементийг устгана
+  list.remove(2); // 2-r elementiig ustgana
   cout << "2-р элементийг устгасны дараа:" << endl;
   for (int i = 0; i < list.length(); ++i) {
     cout << "Элемент [" << i << "]: " << list.get(i) << endl;
