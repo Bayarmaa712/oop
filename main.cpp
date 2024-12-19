@@ -2,24 +2,23 @@
 #include <iostream>
 #include <cstring>
 #include <math.h>
-#include "template.h"
 using namespace std;
 
-//Ерөнхий дүрсийн класс
+// Ерөнхий дүрсийн класс
 class Shape{
   protected:
-    char name[10];
+    char name[20];
   public:
     Shape(const char *n = "shape"){
       strcpy(name, n);
     }
-    void set_name(char *n){
+    void set_name(const char *n){
       strcpy(name, n);
     }
-    char *get_name(){ return name; }
+    const char *get_name(){ return name; }
 };
 
-//2D дүрсийн класс
+// 2D дүрсийн класс
 class TwoDShape : public Shape{
   protected:
     float length, area, perimeter;
@@ -29,13 +28,14 @@ class TwoDShape : public Shape{
       length = l;
       area = 0;
       perimeter = 0;
-      x = NULL;
-      y = NULL;
+      x = new int[1];  
+      y = new int[1];  
     }
-    ~TwoDShape(){
+    virtual ~TwoDShape(){
       delete []x;
       delete []y;
     }
+
     void set_x(int _x){ this->x[0] = _x; }
     void set_y(int _y){ this->y[0] = _y; }
     int get_x(){ return x[0]; }
@@ -44,66 +44,60 @@ class TwoDShape : public Shape{
     float get_perimeter(){ return perimeter; }
     void findArea(float _a){ area = _a; }
     void findPerimeter(float _p){ perimeter = _p; }
-    void setCoordinates(int _x, int _y){}
-    //Дүрсийн мэдээллийг гараас авах функц
-    void getData(){
-      int x, y;
-      cout << endl << "Name of shape: ";
-      cin >> name;
-      set_name(name);
-      cout << "X coordinate: ";
-      cin >> x;
-      set_x(x);
-      cout << "Y coordinate: ";
-      cin >> y;
-      set_y(y);
+    virtual void setCoordinates(int _x, int _y){} 
+
+    // Дүрсийн мэдээллийг санамсаргүй авах функц
+    void getData() {
+        // Санамсаргүй нэр, координат, хэмжээг үүсгэнэ
+        const char *shapeNames[] = {"Тойрог", "Дөрвөлжин", "Гурвалжин"};
+        strcpy(name, shapeNames[rand() % 3]);
+        set_name(name);
+
+        int randomX = rand() % 100;
+        int randomY = rand() % 100;
+        set_x(randomX);
+        set_y(randomY);
     }
-    //Дүрсийн нэр, талбай, периметрийг хэвлэх функц
-    void displayData(){
-      cout << endl << "--- " << this->get_name() << " information ---" << endl;
-      cout << "Area = " << area << endl;
-      cout << "Perimeter = " << perimeter << endl;
+
+    // Дүрсийн нэр, талбай, периметрийг хэвлэх функц
+    void displayData(int index){
+      cout << endl << "Дүрс " << index << ": " << this->get_name() << endl;
+      cout << "Талбай = " << area << endl;
+      cout << "Периметр = " << perimeter << endl;
     }
 };
 
-//Тойрог класс
+// Тойрог класс
 class Circle : public TwoDShape{
   public:
-    Circle() : TwoDShape(){
-      x = new int[1];
-      y = new int[1];
-    }   
+    Circle() : TwoDShape() {}   
+
     void setCoordinates(int _x, int _y){        
       this->x[0] = _x;        
       this->y[0] = _y;    
     }  
-    //Тойргийн мэдээллийг авах функц
-    void getData(){
-      TwoDShape::getData();           //эх классын getData функцийг дуудна
-      cout << "Radius of circle: ";
-      cin >> length;
 
-      findArea(PI * length * length); //Тойргийн талбай, периметрийг тооцно
-      findPerimeter(2 * PI * length);
+    // Тойргийн мэдээллийг санамсаргүй авах функц
+    void getData() {
+        TwoDShape::getData(); 
+        length = rand() % 10 + 1; // Радиусыг санамсаргүйгээр 1-10 хооронд авах
+        findArea(M_PI * length * length); 
+        findPerimeter(2 * M_PI * length); 
     }
 
-    void displayData(){
-      TwoDShape :: displayData();
-      setCoordinates(*x, *y);
-      for(int i = 0; i < 1; i++){
-        cout << "Vertex " << i + 1 << " = (" << x[i] << ", " << y[i] << ")" << endl;
-      }
+    void displayData(int index) {
+        TwoDShape::displayData(index);
+        setCoordinates(get_x(), get_y());
+        cout << "Радиус = " << length << endl;
     }
 };
 
-//Квадрат класс
+// Квадрат класс
 class Square : public TwoDShape{
   public:
-    Square() : TwoDShape(){
-      x = new int[4]; 
-      y = new int[4]; 
-    }
-    //Квадратын оройн цэгүүдийг олох функц
+    Square() : TwoDShape(){}
+
+    // Квадратын оройн цэгүүдийг олох функц
     void setCoordinates(int _x, int _y){
       this->x[0] = _x;        
       this->y[0] = _y;        
@@ -114,56 +108,52 @@ class Square : public TwoDShape{
       this->x[3] = _x + length;       
       this->y[3] = _y; 
     }
-    //Квадратын мэдээллийг авах функц
-    void getData(){
-      TwoDShape::getData();  //эх классын getData функцийг дуудна
-      cout << "Side length of square: ";
-      cin >> length;
-      findArea(length * length); //Квадратын талбай, периметрийг олно
-      findPerimeter(4 * length);
+
+    // Квадратын мэдээллийг санамсаргүй авах функц
+    void getData() {
+        TwoDShape::getData();
+        length = rand() % 10 + 1;  
+        findArea(length * length); 
+        findPerimeter(4 * length); 
     }
-    void displayData(){
-      TwoDShape :: displayData();
-      setCoordinates(*x, *y);
-      for(int i = 0; i < 4; i++){
-        cout << "Vertex " << i + 1 << " = (" << x[i] << ", " << y[i] << ")" << endl;
-      }
+
+    void displayData(int index) {
+        TwoDShape::displayData(index);
+        setCoordinates(get_x(), get_y());
+        cout << "Талын урт = " << length << endl;
     }
 };
 
-//Гурвалжин класс
-class Triangle : public TwoDShape{  
-  public:
-    Triangle() : TwoDShape(){
-      x = new int[3]; 
-      y = new int[3]; 
+// Гурвалжин класс
+class Triangle : public TwoDShape {
+public:
+    Triangle() : TwoDShape() {}
+
+    void setCoordinates(int _x, int _y) {
+        this->x[0] = _x;
+        this->y[0] = _y;
+        this->x[1] = _x - length / 2;
+        this->y[1] = _y - (sqrt(3) / 2) * length;
+        this->x[2] = _x + length / 2;
+        this->y[2] = _y - (sqrt(3) / 2) * length;
     }
-    //Гурвалжины оройн цэгүүдийг олох функц  
-    void setCoordinates(int _x, int _y){
-      this->x[0] = _x;        
-      this->y[0] = _y;        
-      this->x[1] = _x - length / 2;       
-      this->y[1] = _y - (sqrt(3)/2) * length;    
-      this->x[2] = _x + length / 2;      
-      this->y[2] = _y - (sqrt(3)/2) * length;
+
+    // Гурвалжины мэдээллийг санамсаргүй авах функц
+    void getData() {
+        TwoDShape::getData(); 
+        length = rand() % 10 + 1; 
+        setCoordinates(get_x(), get_y());
+        findArea((sqrt(3) / 4) * length * length); 
+        findPerimeter(3 * length); 
     }
-    //Гурвалжны суурь,өндрийг гараас авах функц
-    void getData(){
-      TwoDShape::getData();
-      cout << "Side length of triangle: ";
-      cin >> length;
-      setCoordinates(*x, *y);
-      findArea((sqrt(3) / 4) * length * length);  
-      findPerimeter(3 * length);
-    }
-    void displayData(){
-      TwoDShape :: displayData();
-      setCoordinates(*x, *y);
-      for(int i = 0; i < 3; i++){
-        cout << "Vertex " << i + 1 << " = (" << x[i] << ", " << y[i] << ")" << endl;
-      }
+
+    void displayData(int index) {
+        TwoDShape::displayData(index);
+        setCoordinates(get_x(), get_y());
+        cout << "Талын урт = " << length << endl;
     }
 };
+
 int main() {
     srand(time(0)); 
 
@@ -177,17 +167,14 @@ int main() {
 
         if (shapeType == 0) { 
             Circle* circle = new Circle();
-            circle->setCoordinates(rand() % 100, rand() % 100);
             circle->getData(); // Радиусыг санамсаргүйгээр оруулах
             shape = circle;
         } else if (shapeType == 1) { 
             Square* square = new Square();
-            square->setCoordinates(rand() % 100, rand() % 100);
             square->getData(); // Талын уртыг санамсаргүйгээр оруулах
             shape = square;
         } else { 
             Triangle* triangle = new Triangle();
-            triangle->setCoordinates(rand() % 100, rand() % 100);
             triangle->getData(); // Талын уртыг санамсаргүйгээр оруулах
             shape = triangle;
         }
@@ -200,10 +187,10 @@ int main() {
         return a->get_area() < b->get_area();
     });
 
-    // Эмхэлсэн дүрсийг хэвлэх
+    int index = 1;
     for (TwoDShape* shape : shapes) {
-        shape->displayData();
-        delete shape; // Санах ойг чөлөөлнө
+        shape->displayData(index++);
+        delete shape; 
     }
 
     return 0;
